@@ -29,7 +29,7 @@ const portraitUrls=new Map(),portraitRequests=new Map();
 function showPortrait(name,img){
  const cached=portraitUrls.get(name);if(cached){img.src=cached;return;}
  let request=portraitRequests.get(name);
- if(!request){request=BB.getClient().storage.from('blackbox-portraits').download(name.toLowerCase()+'.jpg').then(({data,error})=>{if(error)throw error;const url=URL.createObjectURL(data);portraitUrls.set(name,url);return url;}).catch(()=>{portraitRequests.delete(name);return null;});portraitRequests.set(name,request);}
+ if(!request){request=BB.getClient().storage.from('blackbox-portraits').download(name.toLowerCase()+'.jpg').then(({data,error})=>{if(error)throw error;const url=URL.createObjectURL(data);portraitUrls.set(name,url);return url;}).catch(error=>{console.warn('Profilbild konnte nicht geladen werden:',name,error);portraitRequests.delete(name);return null;});portraitRequests.set(name,request);}
  request.then(url=>{if(url&&img.isConnected)img.src=url;});
 }
 window.addEventListener('pagehide',()=>{for(const url of portraitUrls.values())URL.revokeObjectURL(url);});
